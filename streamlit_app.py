@@ -21,10 +21,13 @@ def generate_response(uploaded_file, query_text):
         db = Chroma.from_documents(texts, embeddings)
         # Create retriever interface
         retriever = db.as_retriever()
-        # Create QA chain
-        qa = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key=openai_api_key), chain_type='stuff', retriever=retriever)
+        # Create QA chain with the specified model
+        qa = RetrievalQA.from_chain_type(
+            llm=OpenAI(openai_api_key=openai_api_key, model_name="gpt-3.5-turbo-1106"), 
+            chain_type='stuff', 
+            retriever=retriever
+        )
         return qa.run(query_text)
-
 
 # Page title
 st.set_page_config(page_title='🦜🔗 Chinese Repository GPT')
@@ -40,4 +43,3 @@ if uploaded_file and query_text:
     with st.spinner('Calculating...'):
         response = generate_response(uploaded_file, query_text)
         st.info(response)
-
